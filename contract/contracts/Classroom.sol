@@ -29,8 +29,8 @@ contract Classroom is ERC721, Ownable {
     uint256 public projectCount;
     uint256 public taskCount;
     
-    event ProjectCreated(uint256 projectId, string name, address teacher, string ipfsHash);
-    event TaskSubmitted(uint256 taskId, uint256 projectId, address student, string ipfsHash);
+    event ProjectCreated(uint256 projectId, string name, address teacher, string task_details);
+    event TaskSubmitted(uint256 taskId, uint256 projectId, address student, string task_details);
     event TaskVerified(uint256 taskId, TaskStatus status);
     
     constructor() ERC721("ACADEMIC SERTIFICATE", "ACERT") Ownable(address(this)) { }
@@ -39,18 +39,18 @@ contract Classroom is ERC721, Ownable {
         isTeacher[_teacher] = true;
     }
     
-    function createProject(string memory _name, uint256 _reward, string memory _ipfsHash) external {
+    function createProject(string memory _name, uint256 _reward, string memory _task_details) external {
         require(isTeacher[msg.sender], "Only teachers can create projects");
         projectCount++;
         projects[projectCount] = Project(_name, msg.sender, _reward);
-        emit ProjectCreated(projectCount, _name, msg.sender, _ipfsHash);
+        emit ProjectCreated(projectCount, _name, msg.sender, _task_details);
     }
     
-    function submitTask(uint256 _projectId, string memory _ipfsHash) external {
+    function submitTask(uint256 _projectId, string memory _task_details) external {
         require(projects[_projectId].teacher != address(0), "Invalid project");
         taskCount++;
-        tasks[taskCount] = Task(_projectId, msg.sender, _ipfsHash, TaskStatus.Pending);
-        emit TaskSubmitted(taskCount, _projectId, msg.sender, _ipfsHash);
+        tasks[taskCount] = Task(_projectId, msg.sender, _task_details, TaskStatus.Pending);
+        emit TaskSubmitted(taskCount, _projectId, msg.sender, _task_details);
     }
     
     function verifyTask(uint256 _taskId, bool _approved) external {
